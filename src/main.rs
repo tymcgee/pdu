@@ -39,7 +39,6 @@ fn main() -> Result<(), std::io::Error> {
         if file.metadata()?.is_dir() {
             let size = get_size_of_directory(file.path());
             total += size;
-            println!("{}", size);
             data.push(PathData {
                 size,
                 name: file.file_name(),
@@ -86,4 +85,23 @@ fn get_size_of_directory(root: PathBuf) -> u64 {
 }
 
 #[test]
-fn low_file_sizes_should_have_byte_prefix() {}
+fn low_file_sizes_should_have_byte_prefix() {
+    let path = PathData {
+        size: 1000,
+        name: OsString::from("test"),
+        icon: "".to_string(),
+    };
+    let human_readable_size = path.get_human_readable_size();
+    assert_eq!(human_readable_size, "1000.000 B");
+}
+
+#[test]
+fn kilobyte_file_size() {
+    let path = PathData {
+        size: 1024,
+        name: OsString::from("test"),
+        icon: "".to_string(),
+    };
+    let human_readable_size = path.get_human_readable_size();
+    assert_eq!(human_readable_size, "1.000 KiB");
+}
