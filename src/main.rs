@@ -1,3 +1,17 @@
+/**
+* Tynan McGee
+* August 2023
+* Licensed under the MIT license.
+*
+* Note on folder sizes:
+* On some operating systems (at least on unix-based ones), folders themselves have a size of 4kb.
+* This program does not count these so-called folder-sizes, only file-sizes.
+*
+* Note on large filesizes:
+* It is assumed that the total size of a single file or directory in bytes will not exceed the
+* limit set by the u64 type. This means that the ZiB and YiB suffixes are probably impossible to
+* see.
+*/
 use std::{env::current_dir, ffi::OsString, path::PathBuf};
 
 use term_grid::{Cell, Direction, Filling, Grid, GridOptions};
