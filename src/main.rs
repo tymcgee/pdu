@@ -97,14 +97,20 @@ fn print_data(data: &mut Vec<PathData>) {
 }
 
 fn get_size_of_directory(root: PathBuf) -> u64 {
-    return WalkDir::new(root)
+    return match WalkDir::new(root)
         .into_iter()
         .filter_map(|f| f.ok())
         .filter_map(|f| f.metadata().ok())
         // Folders technically take up 4kb of space, but we only care about file sizes
         .filter(|m| m.is_file())
         .map(|m| m.len())
-        .sum();
+        // Do this instead of .sum() to handle overflow errors
+        .try_fold(0u64, |acc, v| acc.checked_add(v))
+    {
+        // TODO: come up with better error handling?
+        None => panic!("Overflow occurred, get a smaller directory :("),
+        Some(v) => v,
+    };
 }
 
 #[test]
